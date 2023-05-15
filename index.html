@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+   <canvas id="canvas" width="288" height="512"></canvas>
+   <script>var cvs = document.getElementById("canvas");
+    var ctx = cvs.getContext("2d");
+    
+    //resim dosyaları
+    
+    var cat = new Image();
+    var sky = new Image();
+    var ground = new Image();
+    var fish = new Image();
+    var poop = new Image();
+    
+    cat.src = "images/cat.png";
+    sky.src = "images/sky.jpg";
+    ground.src = "images/ground.png";
+    fish.src = "images/fish.png";
+    poop.src = "images/poop.png";
+    
+    //ses dosyaları
+    
+    /*var eat = new Audio();
+    var fail = new Audio();
+    
+    eat.src = "sounds/eat.mp3";
+    fail.src = "sounds/fail.mp3";
+    */
+    
+    //bazı değişkenler
+    
+    var cx = 0;
+    var cy = cvs.height - (cat.height + ground.height);
+    var edge = cy-100;
+    var score = 0;
+    
+    //resimleri çizme
+    
+    //--------------
+    
+    //başlangıçta tuşlara basılmadığını belirtmek için false tanımlıyoruz
+    var rightButton = false;
+    var leftButton = false;
+    
+    // Tuşlar dinleniyor
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
+    
+    function keyDownHandler(event) {
+        if (event.keyCode === 39) {
+            rightButton = true; // Sağ yön tuşu (keyCode: 39)
+        } else if (event.keyCode === 37) {
+            leftButton = true; // Sol yön tuşu (keyCode: 37)
+        }
+    }
+    
+    function keyUpHandler(event) {
+        if (event.keyCode === 39) {
+            rightButton = false; // Sağ yön tuşu (keyCode: 39)
+        } else if (event.keyCode === 37) {
+            leftButton = false; // Sol yön tuşu (keyCode: 37)
+        }
+    }
+    
+    function moveCat() {
+        if (rightButton) { //SINIRLAAARR
+            cx += 5; // Hareket hızı
+        } else if (leftButton) {
+            cx -= 5; // Hareket hızı
+        }
+        if (cat.x < 0) {
+            cat.x = 0;}
+    
+        if (cat.x > cvs.width) {
+            cat.x = cvs.width;}
+    }
+      
+    //--------------
+    
+    //balık koordinatları
+    
+    var fishArray = [];
+    
+    fishArray[0] = {
+        x : cvs.width,
+        y : 0
+    };
+    
+    function draw(){
+    
+        ctx.drawImage(sky,0,0);
+        ctx.drawImage(ground,0,cvs.height-ground.height);
+        ctx.drawImage(cat,cx,cy);
+        
+    //-------------------balık düşsün
+        for(i = 0; i < fishArray.length; i++){
+            
+            ctx.drawImage(fish, fishArray[i].x, fishArray[i].y);
+            fishArray[i].y+=2; //düşüş hızı
+    
+            if(fishArray[i].y == edge){ //balık sınıra ulaşırsa yeni bir balık düşsün
+                fishArray.push({
+                    x : Math.floor(Math.random() * (cvs.width - fish.width)),
+                    y : 0
+                });
+            }
+            // skor kuralları
+            if(((fishArray[i].y + fish.height)>= cvs.height) ||  (cx < fishArray[i].x + fishArray[i].width && cx + cat.width > fishArray[i].x && cy < fishArray[i].y + fishArray[i].height && cy + cat.height > fishArray[i].y)){
+    
+              /* fishArray[i].x = -100;
+                fishArray[i].y = -100;*/
+                score++;
+               // eat.play();
+            }
+            else{
+               //fail.play();
+               // location.reload();
+            }
+            ctx.fillStyle = "#0000FF";
+            ctx.font = "20px Verdana";
+            ctx.fillText("Score : "+score,10,cvs.height-20);
+        }
+    //---------------------
+        moveCat();
+    
+        requestAnimationFrame(draw);
+    }
+    draw();</script>
+  </body>
+</html>
