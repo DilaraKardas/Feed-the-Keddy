@@ -24,12 +24,12 @@
     
     //ses dosyaları
     
-    /*var eat = new Audio();
+    var eat = new Audio();
     var fail = new Audio();
     
     eat.src = "sounds/eat.mp3";
     fail.src = "sounds/fail.mp3";
-    */
+    
     
     //bazı değişkenler
     
@@ -38,47 +38,18 @@
     var edge = cy-100;
     var score = 0;
     
-    //resimleri çizme
-    
-    //--------------
-    
-    //başlangıçta tuşlara basılmadığını belirtmek için false tanımlıyoruz
-    var rightButton = false;
-    var leftButton = false;
-    
-    // Tuşlar dinleniyor
-    document.addEventListener("keydown", keyDownHandler, false);
-    document.addEventListener("keyup", keyUpHandler, false);
-    
-    function keyDownHandler(event) {
-        if (event.keyCode === 39) {
-            rightButton = true; // Sağ yön tuşu (keyCode: 39)
-        } else if (event.keyCode === 37) {
-            leftButton = true; // Sol yön tuşu (keyCode: 37)
+     
+   // Tuşlar dinleniyor
+    document.addEventListener("keydown", moveCat);
+    //kedi hareket etsin ve canvas ın dışına çıkmasın
+    function moveCat(e) {
+        if (e.keyCode == 39 &&  cat.x + cat.width < canvas.width) {
+            cx += 10; // Hareket hızı
         }
-    }
-    
-    function keyUpHandler(event) {
-        if (event.keyCode === 39) {
-            rightButton = false; // Sağ yön tuşu (keyCode: 39)
-        } else if (event.keyCode === 37) {
-            leftButton = false; // Sol yön tuşu (keyCode: 37)
+        else if (e.keyCode == 37 && cat.x >= 0) {
+            cx -= 10; // Hareket hızı
         }
-    }
-    
-    function moveCat() {
-        if (rightButton) { //SINIRLAAARR
-            cx += 5; // Hareket hızı
-        } else if (leftButton) {
-            cx -= 5; // Hareket hızı
-        }
-        if (cat.x < 0) {
-            cat.x = 0;}
-    
-        if (cat.x > cvs.width) {
-            cat.x = cvs.width;}
-    }
-      
+  }
     //--------------
     
     //balık koordinatları
@@ -96,7 +67,7 @@
         ctx.drawImage(ground,0,cvs.height-ground.height);
         ctx.drawImage(cat,cx,cy);
         
-    //-------------------balık düşsün
+    //balık düşsün
         for(i = 0; i < fishArray.length; i++){
             
             ctx.drawImage(fish, fishArray[i].x, fishArray[i].y);
@@ -114,21 +85,20 @@
               /* fishArray[i].x = -100;
                 fishArray[i].y = -100;*/
                 score++;
-               // eat.play();
+                eat.play();
             }
             else{
                //fail.play();
-               // location.reload();
+               // location.reload(); //burda hata alıyorum. bu kodu açınca sayfa sürekli yenileniyor
             }
             ctx.fillStyle = "#0000FF";
             ctx.font = "20px Verdana";
             ctx.fillText("Score : "+score,10,cvs.height-20);
         }
-    //---------------------
-        moveCat();
-    
+        moveCat();    
         requestAnimationFrame(draw);
     }
-    draw();</script>
+    draw();
+    </script>
   </body>
 </html>
