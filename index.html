@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title></title>
+    <title>Feed the Keddy</title>
   </head>
   <body>
    <canvas id="canvas" width="288" height="512"></canvas>
+   
    <script>var cvs = document.getElementById("canvas");
     var ctx = cvs.getContext("2d");
     
@@ -14,88 +15,88 @@
     var sky = new Image();
     var ground = new Image();
     var fish = new Image();
-    var poop = new Image();
     
     cat.src = "images/cat.png";
     sky.src = "images/sky.jpg";
     ground.src = "images/ground.png";
     fish.src = "images/fish.png";
-    poop.src = "images/poop.png";
     
     //ses dosyaları
+    
     
     var eat = new Audio();
     var fail = new Audio();
     
-    eat.src = "sounds/eat.mp3";
-    fail.src = "sounds/fail.mp3";
+    eat.src = "audios/eat.mp3";
+    fail.src = "audios/fail.mp3";
     
     
     //bazı değişkenler
     
     var cx = 0;
-    var cy = cvs.height - (cat.height + ground.height);
-    var edge = cy-100;
+    var cy = 400;
+    var edge = cy-100; //yeni balığın düşmesi için gereken sınır
     var score = 0;
     
-     
-   // Tuşlar dinleniyor
+    //resimleri çizme
+    
+    // Tuşlar dinleniyor
     document.addEventListener("keydown", moveCat);
-    //kedi hareket etsin ve canvas ın dışına çıkmasın
-    function moveCat(e) {
+    
+    function moveCat(e) {  //burası çalışmıyor. hareket ediyor ama sınır dışına çıkıyor.
         if (e.keyCode == 39 &&  cat.x + cat.width < canvas.width) {
             cx += 10; // Hareket hızı
         }
         else if (e.keyCode == 37 && cat.x >= 0) {
             cx -= 10; // Hareket hızı
         }
-  }
-    //--------------
+        
+    }
     
-    //balık koordinatları
-    
+    // Balık koordinatları
     var fishArray = [];
     
     fishArray[0] = {
         x : cvs.width,
-        y : 0
+        y : 0,
     };
     
-    function draw(){
+    function draw() {
+        ctx.drawImage(sky, 0, 0);
+        ctx.drawImage(ground, 0, cvs.height - ground.height);
+        ctx.drawImage(cat, cx, cy);
     
-        ctx.drawImage(sky,0,0);
-        ctx.drawImage(ground,0,cvs.height-ground.height);
-        ctx.drawImage(cat,cx,cy);
-        
-    //balık düşsün
-        for(i = 0; i < fishArray.length; i++){
-            
+        // Balık düşme işlemi
+        for (i = 0; i < fishArray.length; i++) {
+            fishArray[i].y += 2; // Düşüş hızı
             ctx.drawImage(fish, fishArray[i].x, fishArray[i].y);
-            fishArray[i].y+=2; //düşüş hızı
     
             if(fishArray[i].y == edge){ //balık sınıra ulaşırsa yeni bir balık düşsün
                 fishArray.push({
-                    x : Math.floor(Math.random() * (cvs.width - fish.width)),
+                    x : Math.floor(Math.random() * (cvs.width-fish.width)),
                     y : 0
                 });
             }
-            // skor kuralları
-            if(((fishArray[i].y + fish.height)>= cvs.height) ||  (cx < fishArray[i].x + fishArray[i].width && cx + cat.width > fishArray[i].x && cy < fishArray[i].y + fishArray[i].height && cy + cat.height > fishArray[i].y)){
     
-              /* fishArray[i].x = -100;
-                fishArray[i].y = -100;*/
+            // Skor kuralları
+            if (cx < fishArray[i].x + fish.width &&
+                cx + cat.width > fishArray[i].x &&
+                cy < fishArray[i].y + fish.height &&
+                cy + cat.height > fishArray[i].y
+            ) {
+                fishArray.splice(i, 1); // Yakalanan balığı diziden kaldır  
                 score++;
-                eat.play();
+                //eat.play();
             }
-            else{
-               //fail.play();
-               // location.reload(); //burda hata alıyorum. bu kodu açınca sayfa sürekli yenileniyor
+            if (fishArray[i].y >= cvs.height-ground.height) { // Balık yere düşerse oyunu baştan başlat => burası da çalışmıyor.
+               // location.reload(); //bu satırı yorumdan çıkartınca sayfa sürekli yenileniyor. Ve crome donuyor.
             }
-            ctx.fillStyle = "#0000FF";
-            ctx.font = "20px Verdana";
-            ctx.fillText("Score : "+score,10,cvs.height-20);
         }
-        moveCat();    
+    
+        ctx.fillStyle = "#0000FF";
+        ctx.font = "20px Verdana";
+        ctx.fillText("Score: " + score, 10, cvs.height - 20);
+    
         requestAnimationFrame(draw);
     }
     draw();
