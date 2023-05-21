@@ -44,10 +44,10 @@
     document.addEventListener("keydown", moveCat);
     
     function moveCat(e) {  //burası çalışmıyor. hareket ediyor ama sınır dışına çıkıyor.
-        if (e.keyCode == 39 &&  cat.x + cat.width < canvas.width) {
+        if (e.keyCode == 39 &&  cx + cat.width < canvas.width) {
             cx += 10; // Hareket hızı
         }
-        else if (e.keyCode == 37 && cat.x >= 0) {
+        else if (e.keyCode == 37 && cx >= 0) {
             cx -= 10; // Hareket hızı
         }
         
